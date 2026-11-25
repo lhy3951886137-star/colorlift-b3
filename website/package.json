@@ -1,0 +1,10 @@
+{
+  "name": "colorlift-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22 <25" },
+  "description": "Interactive scene composer and streaming viewer for ColorLift / robosuite",
+  "scripts": { "start": "node server.mjs", "test": "node tests/geometry.test.mjs && node tests/records.test.mjs && node tests/proxy.test.mjs", "test:api": "node tests/api.test.mjs", "test:proxy": "node tests/proxy.test.mjs" },
+  "dependencies": { "three": "0.170.0" }
+}

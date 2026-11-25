@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f5f2"><meta name="description" content="ColorLift 机器人实验工作台：设计场景，指定颜色，观察抓取。">
+  <title>ColorLift Studio · 机器人实验工作台</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true"><defs>
+    <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z M4 7.5l8 4.5 8-4.5M12 12v9"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7V5Z"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 16v4h16v-4"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="m9 15 6-6m-7 3-2 2a4 4 0 0 0 6 6l3-3M9 7l3-3a4 4 0 0 1 6 6l-2 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M8 7l4-4 4 4M8 17l4 4 4-4M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol>
+  </defs></svg>
+  <aside class="rail">
+    <a href="/" class="brand-mark" aria-label="ColorLift 首页"><svg><use href="#i-cube"/></svg></a>
+    <div class="rail-line"></div>
+    <button class="rail-item active" title="实验工作台" aria-label="实验工作台"><svg><use href="#i-grid"/></svg><span>工作台</span></button>
+    <button class="rail-item" id="rail-records" title="本次运行记录" aria-label="本次运行记录"><svg><use href="#i-camera"/></svg><span>记录</span></button>
+    <div class="rail-bottom"><button class="rail-item" id="help-button" title="使用帮助" aria-label="使用帮助"><svg><use href="#i-info"/></svg></button><div class="avatar">CL</div></div>
+  </aside>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="wordmark">ColorLift<span>Studio</span><span class="beta">LAB / 01</span></div>
+      <div class="top-actions"><span class="engine-badge"><i></i><span id="engine-status">演示引擎就绪</span></span><button class="text-button" id="connect-button"><svg><use href="#i-link"/></svg>模型接入<svg class="arrow-small"><use href="#i-arrow"/></svg></button></div>
+    </header>
+    <main>
+      <section class="page-heading"><div><div class="eyebrow">ROBOTICS PLAYGROUND</div><h1>让你的想法，落在桌面上<span class="orange-dot">.</span></h1><p>布置一个场景，选定一个颜色，观察一次抓取。</p></div><button class="button secondary" id="load-example"><svg><use href="#i-reset"/></svg>载入示例场景</button></section>
+      <div class="workspace-layout">
+        <section class="scene-panel">
+          <div class="scene-toolbar"><div class="scene-title"><span class="status-dot"></span>场景工作区<span class="subtle-divider">/</span><span id="view-description">俯视编辑</span></div><div class="view-tabs" role="tablist" aria-label="场景视图"><button id="tab-2d" role="tab" aria-selected="true" class="selected">2D <span>摆放</span></button><button id="tab-3d" role="tab" aria-selected="false">3D <span>预览</span></button></div></div>
+          <div class="viewport" id="viewport">
+            <div class="viewport-meta"><span id="viewport-mode"><i></i> SCENE EDITOR</span><span id="scene-count">03 OBJECTS</span></div>
+            <div id="editor" class="editor" tabindex="0" aria-label="二维方块摆放区域，点击方块可选中，拖动可移动，沿灰色弧线拖动可旋转">
+              <svg id="editor-svg" viewBox="0 0 900 660" role="img" aria-label="桌面二维俯视图">
+                <defs>
+                  <pattern id="small-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#e2e5df" stroke-width=".7"/></pattern>
+                  <pattern id="collision-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#ef444430"/><path d="M0 0v7" stroke="#df3535" stroke-width="2"/></pattern>
+                  <filter id="cube-shadow" x="-100%" y="-100%" width="300%" height="300%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#262b23" flood-opacity=".15"/></filter>
+                  <filter id="table-shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#253025" flood-opacity=".05"/></filter>
+                </defs>
+                <rect x="125" y="51" width="650" height="568" rx="16" fill="#e4e6df" opacity=".45"/>
+                <rect x="113" y="39" width="674" height="568" rx="16" fill="#fafbf7" stroke="#d8ddd4" filter="url(#table-shadow)"/>
+                <rect x="128" y="54" width="644" height="538" rx="6" fill="url(#small-grid)"/>
+                <path d="M450 75v490M205 330h490" stroke="#d2d7ce" stroke-dasharray="4 7"/>
+                <rect x="218" y="98" width="464" height="464" rx="4" fill="#f0f2e9" fill-opacity=".25" stroke="#c5ccbc" stroke-dasharray="5 7"/>
+                <path d="M218 120V98h22M660 98h22v22M682 540v22h-22M240 562h-22v-22" stroke="#9aa98a" stroke-width="2" fill="none"/>
+                <g font-family="monospace" fill="#8c9487" font-size="11"><text x="218" y="585">−145</text><text x="447" y="585">0</text><text x="654" y="585">+145 mm</text><text x="185" y="104">+145</text><text x="198" y="334">0</text><text x="185" y="565">−145</text><text x="700" y="334">X</text><text x="447" y="87">Y</text></g>
+                <g transform="translate(450 330)" opacity=".35"><circle r="5" fill="none" stroke="#8e9986"/><path d="M-9 0H9M0-9V9" stroke="#8e9986"/></g>
+                <text x="146" y="78" fill="#a1a89a" font-family="monospace" font-size="10" letter-spacing="2">TABLE / TOP VIEW</text>
+                <text x="738" y="575" fill="#a1a89a" font-family="monospace" font-size="10" transform="rotate(-90 738 575)">0.8 m ABOVE GROUND</text>
+                <g id="cube-layer"></g><g id="collision-layer" pointer-events="none"></g><g id="rotation-layer"></g>
+              </svg>
+            </div>
+            <div id="world" class="world hidden"><div id="three-container"></div><img id="live-frame" class="hidden" alt="robosuite 模型运行画面"><div id="webgl-error" class="hidden">当前浏览器无法启用三维渲染，请启用硬件加速后重试。</div><div class="camera-presets"><button data-camera="perspective" class="active">透视</button><button data-camera="front">正面</button><button data-camera="top">俯视</button></div></div>
+            <div class="placement-hint" id="placement-hint"><svg><use href="#i-move"/></svg><span>点击方块选中 · 拖动移动 · 沿灰色弧线旋转</span></div>
+            <div class="axis-gizmo" aria-hidden="true"><span class="axis-y">Y</span><span class="axis-x">X</span><span class="axis-origin"></span></div>
+            <div class="demo-watermark hidden" id="demo-watermark">DEMO · 界面动画演示</div>
+          </div>
+          <div class="scene-footer"><span><span class="tiny-square"></span>方块 40 × 40 mm <span class="footer-sep">·</span>可放置中心 ±145 mm</span><div><button class="icon-button" id="undo" title="撤销 Ctrl+Z" aria-label="撤销"><svg><use href="#i-reset"/></svg></button><span class="footer-sep">|</span><button class="footer-action" id="clear-scene"><svg><use href="#i-trash"/></svg>清空</button><button class="footer-action" id="export-scene"><svg><use href="#i-download"/></svg>导出</button><button class="footer-action" id="import-scene"><svg><use href="#i-upload"/></svg>导入</button></div></div>
+        </section>
+        <aside class="control-panel">
+          <section class="control-section palette-section"><div class="section-heading"><h2>场景物块</h2><span id="placed-count" class="count-badge">3 / 3</span></div><p class="section-description">选择颜色，在桌面点击放置</p><div class="palette">
+            <button class="palette-card" data-color="red" aria-label="放置或选中红色方块"><span class="mini-cube red"></span><strong>红色</strong><span class="palette-state">已放置</span><span class="palette-check">✓</span></button>
+            <button class="palette-card" data-color="yellow" aria-label="放置或选中黄色方块"><span class="mini-cube yellow"></span><strong>黄色</strong><span class="palette-state">已放置</span><span class="palette-check">✓</span></button>
+            <button class="palette-card" data-color="blue" aria-label="放置或选中蓝色方块"><span class="mini-cube blue"></span><strong>蓝色</strong><span class="palette-state">已放置</span><span class="palette-check">✓</span></button>
+          </div><div class="palette-note"><svg><use href="#i-info"/></svg>每种颜色一个，重叠位置无法放置</div></section>
+          <section class="control-section selection-section"><div class="section-heading"><h2>物块属性</h2><button class="icon-button" id="delete-cube" aria-label="移除选中方块" title="移除选中方块"><svg><use href="#i-trash"/></svg></button></div><div id="selection-empty" class="selection-empty">选中桌面上的方块，调整位置与朝向</div><div id="selection-fields" class="hidden"><div class="selected-label"><i id="selection-dot"></i><span id="selection-name">红色方块</span><span class="unit-note">POSITION / ROTATION</span></div><div class="position-fields"><label>X <input id="input-x" type="number" min="-145" max="145" step="1" aria-label="X 坐标，毫米"><span>mm</span></label><label>Y <input id="input-y" type="number" min="-145" max="145" step="1" aria-label="Y 坐标，毫米"><span>mm</span></label></div><div class="rotation-label"><label for="input-yaw">平面旋转</label><span id="yaw-value">0°</span></div><input id="input-yaw" type="range" min="-180" max="180" step="1" aria-label="旋转角度"><div class="slider-labels"><span>−180°</span><span>0°</span><span>180°</span></div></div></section>
+          <section class="control-section target-section"><div class="section-heading"><h2>抓取目标</h2><span class="small-label">TARGET COLOR</span></div><div class="target-options" role="group" aria-label="选择抓取目标"><button data-target="red" class="selected" aria-pressed="true"><i class="red-dot"></i>红色</button><button data-target="yellow" aria-pressed="false"><i class="yellow-dot"></i>黄色</button><button data-target="blue" aria-pressed="false"><i class="blue-dot"></i>蓝色</button></div><div class="task-description"><svg><use href="#i-check"/></svg><span>抬升超过 <b>4 cm</b>，稳定保持 <b>2 s</b></span></div></section>
+          <section class="run-section"><div class="engine-card"><div class="engine-icon"><svg><use href="#i-cube"/></svg></div><div><strong id="engine-name">演示模式</strong><span id="engine-description">模型尚未连接 · 可体验完整交互</span></div><span class="engine-chip" id="engine-chip">DEMO</span></div><div class="controller-picker hidden" id="controller-picker" role="group" aria-label="选择运行控制器"><button type="button" data-controller="b3" class="selected" aria-pressed="true">原 B3</button><button type="button" data-controller="direction" aria-pressed="false">方向示范</button></div><button class="run-button" id="run-button"><svg><use href="#i-play"/></svg><span>运行抓取演示</span><kbd>↵</kbd></button><button class="stop-button hidden" id="stop-button"><span></span>停止运行</button><p class="run-note" id="run-note">运行后自动切换至三维视图</p></section>
+        </aside>
+      </div>
+      <section class="monitor-panel" id="monitor"><div class="monitor-heading"><div><span class="status-dot" id="monitor-dot"></span><h2>运行监视器</h2><span id="run-status">等待运行</span></div><button id="expand-log" class="text-button">运行日志 <span id="log-toggle">＋</span></button></div><div class="monitor-content"><div class="phase-track" id="phase-track"><div data-phase="approach"><span>01</span><strong>接近目标</strong><small>APPROACH</small></div><div data-phase="align"><span>02</span><strong>对齐下降</strong><small>ALIGN</small></div><div data-phase="close"><span>03</span><strong>闭合夹爪</strong><small>GRASP</small></div><div data-phase="lift"><span>04</span><strong>抬升保持</strong><small>LIFT & HOLD</small></div></div><div class="metrics"><div><span>执行步数</span><strong id="metric-steps">—<small> steps</small></strong></div><div><span>抬升高度</span><strong id="metric-height">—<small> cm</small></strong></div><div><span>稳定保持</span><strong id="metric-hold">—<small> s</small></strong></div></div></div><div class="progress-track"><div id="run-progress"></div></div><div class="log-panel hidden" id="log-panel" role="log" aria-label="运行日志"></div></section>
+      <section class="records-panel" id="records-panel" aria-labelledby="records-title">
+        <div class="records-heading"><div><div class="eyebrow">YOUR EXPERIMENT JOURNAL</div><h2 id="records-title">运行记录 <span id="records-count" class="count-badge">0</span></h2><p>保留此浏览器最近 30 次运行 · 演示记录不计入模型成功率</p></div><button class="button secondary" id="export-records"><svg><use href="#i-download"/></svg>导出全部记录</button></div>
+        <div class="record-stats"><div><span>保存的运行</span><strong id="stat-total">0</strong></div><div><span>演示记录</span><strong id="stat-demo">0</strong></div><div><span>模型成功 / 已判分</span><strong id="stat-model">—</strong></div><div><span>成功回合平均步数</span><strong id="stat-steps">—</strong></div></div>
+        <div class="record-filters" role="group" aria-label="筛选运行记录"><button data-record-filter="all" class="selected" aria-pressed="true">全部</button><button data-record-filter="demo" aria-pressed="false">演示</button><button data-record-filter="expert" aria-pressed="false">方向示范</button><button data-record-filter="model" aria-pressed="false">B3 模型</button><span id="record-scope">尚无真实模型评测</span></div>
+        <div class="records-table-wrap"><table class="records-table"><thead><tr><th>运行时间</th><th>来源 / 目标</th><th>运行结果</th><th>执行步数</th><th>最大抬升</th><th>操作</th></tr></thead><tbody id="record-rows"></tbody></table></div>
+        <div class="records-empty" id="records-empty"><svg><use href="#i-camera"/></svg><strong>从第一次运行开始记录</strong><span>点击“运行抓取演示”，这里会保存布局、阶段与结果。</span></div>
+        <p id="record-storage-note" class="record-storage-note">记录保存在本机浏览器；清理浏览器数据会移除记录，重要结果请导出。</p>
+      </section>
+      <footer class="page-footer"><span><span class="footer-brand">C/L</span> Built for curious minds.</span><span>ColorLift · robosuite workspace<span class="footer-sep">/</span><span id="footer-mode">界面演示，非模型推理结果</span></span></footer>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div><input type="file" id="file-input" accept="application/json,.json" hidden>
+  <dialog id="info-dialog"><div class="dialog-heading"><div><div class="eyebrow">COLORLIFT STUDIO</div><h2 id="dialog-title">模型接入</h2></div><button id="close-dialog" class="icon-button" aria-label="关闭">✕</button></div><div id="dialog-body"></div><button class="button primary" id="dialog-ok">明白了<svg><use href="#i-check"/></svg></button></dialog>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

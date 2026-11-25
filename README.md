@@ -29,6 +29,10 @@ python scripts/run_b3.py --gpu 1 --color red
 
 原机器专用的 `activate.sh` 和历史实验命令保留供追溯；换机器时使用自己的 Conda 环境和路径。源码包中的 `requirements-*.freeze.txt` 包含原服务器路径，属于历史环境记录。
 
+## Interactive website
+
+The ColorLift Studio web workbench lives in [`website/`](website/). It provides a local scene editor, a demo mode, and an optional bridge to the robosuite model service. See [`website/README.md`](website/README.md) for setup. The web app is not part of B3 training and does not change the frozen model or its evaluation results.
+
 ## 权重和完整数据
 
 权重与大数据通过 GitHub Release 提供；Git 仓库保存源码、配置、报告和校验清单。
